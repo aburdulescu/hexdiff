@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -49,7 +50,7 @@ func run() error {
 	secondResult := ""
 
 	for i := 0; i < smallestLen; i += 2 {
-		if first[i:i+2] != second[i:i+2] {
+		if !strings.EqualFold(first[i:i+2], second[i:i+2]) {
 			firstResult += fmt.Sprint(cRed, first[i:i+2], cReset)
 			secondResult += fmt.Sprint(cRed, second[i:i+2], cReset)
 		} else {
