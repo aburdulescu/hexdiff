@@ -3,8 +3,7 @@ BINNAME = hexdiff
 
 .PHONY: build install clean
 
-build:
-	$(CC) -Wall -Wextra -O3 -o $(BINNAME) main.c
+build: $(BINNAME)
 
 install: build
 	strip $(BINNAME)
@@ -12,3 +11,6 @@ install: build
 
 clean:
 	rm -f $(BINNAME)
+
+$(BINNAME): main.c
+	$(CC) -Wall -Wextra -O3 -o $(BINNAME) main.c
