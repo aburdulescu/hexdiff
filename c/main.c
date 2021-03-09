@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -9,8 +10,15 @@ typedef struct {
   size_t size;
 } hexstr_t;
 
+static inline int isCharEq(char l, char r) {
+  const char magic = 'A' - 'a';
+  if (isupper(l)) l -= magic;
+  if (isupper(r)) r -= magic;
+  return (l == r);
+}
+
 static inline int isHexDigitEq(const char* l, const char* r) {
-    return (l[0] == r[0] && l[1] == r[1]); // TODO: make it case insensitive
+  return (isCharEq(l[0], r[0]) && isCharEq(l[1], r[1]));
 }
 
 static inline void hexstr_process(const hexstr_t self, const hexstr_t other,
