@@ -12,5 +12,5 @@ install: build
 clean:
 	rm -f $(BINNAME)
 
-$(BINNAME): main.c
-	$(CC) -Wall -Wextra -O3 -o $(BINNAME) main.c
+$(BINNAME): hexdiff.c
+	$(CC) -Wall -Wextra -O3 -o $(BINNAME) hexdiff.c
