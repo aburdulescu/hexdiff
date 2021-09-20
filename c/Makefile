@@ -1,4 +1,4 @@
-CFLAGS = \
+CFLAGS += \
 	-O2 \
 	-Wall \
 	-Wextra \
@@ -16,7 +16,6 @@ CFLAGS_DEBUG = $(CFLAGS) \
 	-fsanitize=pointer-subtract \
 	-fsanitize=leak \
 	-fsanitize=undefined \
-	-fsanitize=bounds-strict \
 	-fsanitize=float-divide-by-zero \
 	-fsanitize=float-cast-overflow
 

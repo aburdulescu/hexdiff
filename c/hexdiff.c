@@ -21,8 +21,8 @@ static inline int isHexDigitEq(const char* l, const char* r) {
   return (isCharEq(l[0], r[0]) && isCharEq(l[1], r[1]));
 }
 
-static inline void hexstr_process(const hexstr_t self, const hexstr_t other,
-                                  size_t cmnSize) {
+static inline void hexstr_process(const hexstr_t self, const hexstr_t other) {
+  const size_t cmnSize = (self.size < other.size) ? self.size : other.size;
   for (size_t i = 0; i < cmnSize; i += 2) {
     if (isHexDigitEq(self.data + i, other.data + i)) {
       printf("%c%c", self.data[i], self.data[i + 1]);
@@ -57,10 +57,8 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  const int smallestLen = (first.size < second.size) ? first.size : second.size;
-
-  hexstr_process(first, second, smallestLen);
-  hexstr_process(second, first, smallestLen);
+  hexstr_process(first, second);
+  hexstr_process(second, first);
 
   return 0;
 }
