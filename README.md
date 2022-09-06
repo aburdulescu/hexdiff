@@ -3,7 +3,7 @@ Diff two hex strings
 
 ## Install
 - [install go](https://golang.org/doc/install)
-- run `go get github.com/aburdulescu/hexdiff`
+- run `go install bandr.me/p/hexdiff@latest`
 
 ## Usage
 Run the tool with two args: first hex string and second hex string.

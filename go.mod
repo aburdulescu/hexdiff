@@ -1,3 +1,3 @@
-module github.com/aburdulescu/hexdiff
+module bandr.me/p/hexdiff
 
-go 1.16
+go 1.19
