@@ -1,10 +1,23 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"strings"
 )
+
+const usage = `Usage: chexdiff [options] input1 input2
+
+Compare the two given inputs as hex and print their differences, if any.
+
+Options:
+    -h    print this message and exit
+    -v    print version and exit
+    -i    case insensitive comparison
+    -f    treat inputs as files and compare their contents
+    -x    if -f is active, convert file contents to hex before comparing them
+`
 
 func main() {
 	if err := run(); err != nil {
@@ -19,22 +32,34 @@ const (
 )
 
 func run() error {
-	args := os.Args[1:]
+	fVersion := flag.Bool("v", false, "version")
+	fIgnoreCase := flag.Bool("i", false, "ignore case")
+	fInputsAsFiles := flag.Bool("f", false, "treat inputs as files")
+	fConvertToHex := flag.Bool("x", false, "when -i is active, convert file content to hex")
 
-	if len(args) < 1 {
-		return fmt.Errorf("missing first hex string")
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, usage)
+		os.Exit(1)
 	}
-	first := args[0]
+
+	flag.Parse()
+
+	_ = fVersion
+	_ = fIgnoreCase
+	_ = fInputsAsFiles
+	_ = fConvertToHex
+
+	args := flag.Args()
 
 	if len(args) < 2 {
-		return fmt.Errorf("missing second hex string")
+		flag.Usage()
 	}
+	first := args[0]
 	second := args[1]
 
 	if len(first)%2 != 0 {
 		return fmt.Errorf("first arg is not a hex string(length is not even)")
 	}
-
 	if len(second)%2 != 0 {
 		return fmt.Errorf("second arg is not a hex string(length is not even)")
 	}
