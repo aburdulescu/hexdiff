@@ -7,14 +7,13 @@ import (
 	"strings"
 )
 
-const usage = `Usage: chexdiff [options] input1 input2
+const usage = `Usage: hexdiff [options] input1 input2
 
 Compare the two given inputs as hex and print their differences, if any.
 
 Options:
     -h    print this message and exit
     -v    print version and exit
-    -i    case insensitive comparison
     -f    treat inputs as files and compare their contents
     -x    if -f is active, convert file contents to hex before comparing them
 `
@@ -33,19 +32,17 @@ const (
 
 func run() error {
 	fVersion := flag.Bool("v", false, "version")
-	fIgnoreCase := flag.Bool("i", false, "ignore case")
 	fInputsAsFiles := flag.Bool("f", false, "treat inputs as files")
 	fConvertToHex := flag.Bool("x", false, "when -i is active, convert file content to hex")
 
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, usage)
+		fmt.Fprint(os.Stderr, usage)
 		os.Exit(1)
 	}
 
 	flag.Parse()
 
 	_ = fVersion
-	_ = fIgnoreCase
 	_ = fInputsAsFiles
 	_ = fConvertToHex
 
@@ -64,54 +61,50 @@ func run() error {
 		return fmt.Errorf("second arg is not a hex string(length is not even)")
 	}
 
-	firstResult, secondResult := hexdiff(first, second)
-
-	fmt.Println(firstResult)
-	fmt.Println(secondResult)
+	fmt.Print(hexdiff(first, second))
 
 	return nil
 }
 
-func hexdiff(first, second string) (string, string) {
-	var smallestLen int
+func hexdiff(first, second string) string {
+	var minLen int
 	if len(first) < len(second) {
-		smallestLen = len(first)
+		minLen = len(first)
 	} else {
-		smallestLen = len(second)
+		minLen = len(second)
 	}
 
-	var firstResult strings.Builder
-	var secondResult strings.Builder
+	result := new(strings.Builder)
+	result.Grow(len(first) + len(second))
 
-	firstResult.Grow(len(first))
-	secondResult.Grow(len(second))
-
-	for i := 0; i < smallestLen; i += 2 {
-		if !strings.EqualFold(first[i:i+2], second[i:i+2]) {
-			firstResult.WriteString(cRed)
-			firstResult.WriteString(first[i : i+2])
-			firstResult.WriteString(cReset)
-
-			secondResult.WriteString(cRed)
-			secondResult.WriteString(second[i : i+2])
-			secondResult.WriteString(cReset)
+	i := 0
+	for ; i < minLen; i += 2 {
+		l := first[i : i+2]
+		r := second[i : i+2]
+		if !strings.EqualFold(l, r) {
+			fmt.Fprintf(result, "%s%s %s%s\n", cRed, l, r, cReset)
 		} else {
-			firstResult.WriteString(first[i : i+2])
-			secondResult.WriteString(second[i : i+2])
+			fmt.Fprintf(result, "%s %s\n", l, r)
 		}
 	}
 
+	if len(first) == len(second) {
+		return result.String()
+	}
+
+	extra := ""
+	padding := ""
+
 	if len(first) > len(second) {
-		firstResult.WriteString(cRed)
-		firstResult.WriteString(first[len(second):])
-		firstResult.WriteString(cReset)
+		extra = first[i:]
+	} else {
+		extra = second[i:]
+		padding = "   "
 	}
 
-	if len(second) > len(first) {
-		secondResult.WriteString(cRed)
-		secondResult.WriteString(second[len(first):])
-		secondResult.WriteString(cReset)
+	for j := 0; j < len(extra); j += 2 {
+		fmt.Fprintf(result, "%s%s%s%s\n", cRed, padding, extra[j:j+2], cReset)
 	}
 
-	return firstResult.String(), secondResult.String()
+	return result.String()
 }
